@@ -97,6 +97,12 @@ jobs:
           shasum -a 256 $FILE >>$DGST
           shasum -a 512 $FILE >>$DGST
 
+      - name: Upload artifact (full source)
+        uses: actions/upload-artifact@v3
+        with:
+          name: dae-full-src.zip
+          path: dae-full-src.zip
+
       - name: Build dae
         run: |
           mkdir -p ./build/
@@ -116,6 +122,7 @@ jobs:
         run: ./build/dae-$ASSET_NAME --version
 
       - name: Create binary ZIP archive and Signature
+        if: matrix.goarch == 'amd64' && matrix.goamd64 == 'v1'
         run: |
           pushd build || exit 1
           zip -9vr ../dae-$ASSET_NAME.zip .
@@ -133,18 +140,22 @@ jobs:
           name: dae-${{ steps.get_filename.outputs.ASSET_NAME }}.zip
           path: build/*
 
-      # - name: Upload full source to GitHub release
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file_glob: true
-      #     file: dae-full-src.zip*
-      #     overwrite: true
-      #     tag: ${{ inputs.tag }}
-      #     prerelease: true
+  upload-release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: release/
+
+      - name: Prepare files for upload
+        run: |
+          cp release/*/*.zip ./
+          echo "Show files are going to upload..."
+          ls -ltrh | grep -E ".zip"
 
       - name: Upload full source to GitHub release
-        if: matrix.goarch == 'amd64' && matrix.goamd64 == 'v1'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ inputs.tag }}
@@ -152,22 +163,13 @@ jobs:
             dae-full-src.zip*
           prerelease: true
 
-      # - name: Upload files to GitHub release
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file_glob: true
-      #     file: dae-${{ steps.get_filename.outputs.ASSET_NAME }}.zip*
-      #     overwrite: true
-      #     tag: ${{ inputs.tag }}
-      #     prerelease: true
-
       - name: Upload full source and artifacts to GitHub release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ inputs.tag }}
           files: |
-            dae-${{ steps.get_filename.outputs.ASSET_NAME }}.zip*
+            *zip
+            *dgst
           prerelease: true
 
 

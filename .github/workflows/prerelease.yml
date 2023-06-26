@@ -143,13 +143,14 @@ jobs:
       #     tag: ${{ inputs.tag }}
       #     prerelease: true
 
-      # - name: Upload full source to GitHub release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     tag_name: ${{ inputs.tag }}
-      #     files: |
-      #       dae-full-src.zip*
-      #     prerelease: true
+      - name: Upload full source to GitHub release
+        if: matrix.goarch == 'amd64' && matrix.goamd64 == 'v1'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.tag }}
+          files: |
+            dae-full-src.zip*
+          prerelease: true
 
       # - name: Upload files to GitHub release
       #   uses: svenstaro/upload-release-action@v2
@@ -166,7 +167,7 @@ jobs:
         with:
           tag_name: ${{ inputs.tag }}
           files: |
-            *.zip
+            dae-${{ steps.get_filename.outputs.ASSET_NAME }}.zip*
           prerelease: true
 
 

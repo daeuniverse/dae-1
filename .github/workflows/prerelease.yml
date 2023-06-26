@@ -128,6 +128,13 @@ jobs:
           shasum -a 256 $FILE >>$DGST
           shasum -a 512 $FILE >>$DGST
 
+      - name: Upload full source to Artifacts
+        if: matrix.goarch == 'amd64' && matrix.goamd64 == 'v1'
+        uses: actions/upload-artifact@v3
+        with:
+          name: dae-full-src.zip
+          path: dae-full-src.zip*
+
       - name: Upload files to Artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -145,9 +152,9 @@ jobs:
 
       - name: Prepare files for upload
         run: |
-          cp release/*/*.zip ./
+          cp release/*
           echo "Show files are going to upload..."
-          ls -ltrh | grep -E ".zip"
+          ls -ltrh | grep -E ".zip*"
 
       - name: Upload full source to GitHub release
         uses: softprops/action-gh-release@v1

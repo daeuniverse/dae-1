@@ -142,7 +142,7 @@ jobs:
 
       - name: Prepare files for upload
         run: |
-          cp release/* ./
+          cp release/*.zip ./
           for package in $(ls | grep -E ".zip");do
               echo "$(md5sum $package)""  md5" >> $package.dgst
               echo "$(shasum -a 1 $package)""  sha1" >> $package.dgst

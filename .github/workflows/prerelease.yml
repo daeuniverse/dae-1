@@ -128,7 +128,7 @@ jobs:
       - name: Upload files to Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: dae-${{ steps.get_filename.outputs.ASSET_NAME }}.zip
+          name: dae-${{ steps.get_filename.outputs.ASSET_NAME }}
           path: build/*
 
   upload-release:
@@ -142,7 +142,14 @@ jobs:
 
       - name: Prepare files for upload
         run: |
-          cp -r release/* .
+          cp -r release/* ./
+          pushd release
+          for zip_file in $(ls | grep -E "^daed-linux*");do
+              pushd $zip_file
+              zip -9r ../../"$zip_file".zip ./*
+              popd
+          done
+          popd
           for package in $(ls | grep -E ".zip");do
               echo "$(md5sum $package)""  md5" >> $package.dgst
               echo "$(shasum -a 1 $package)""  sha1" >> $package.dgst

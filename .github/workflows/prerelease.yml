@@ -92,7 +92,11 @@ jobs:
         run: |
           zip -9vr dae-full-src.zip . -x .git/\*
           FILE=./dae-full-src.zip
-
+          echo "$(md5sum $FILE)""  md5" >> $FILE.dgst
+          echo "$(shasum -a 1 $FILE)""  sha1" >> $FILE.dgst
+          echo "$(shasum -a 256 $FILE)""  sha256" >> $FILE.dgst
+          echo "$(shasum -a 512 $FILE)""  sha512" >> $FILE.dgst
+  
       - name: Build dae
         run: |
           mkdir -p ./build/

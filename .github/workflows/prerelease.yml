@@ -142,7 +142,7 @@ jobs:
 
       - name: Prepare files for upload
         run: |
-          cp -r release/* ./
+          cp release/*/*.zip ./
           pushd release
           for zip_file in $(ls | grep -E "^daed-linux*");do
               pushd $zip_file

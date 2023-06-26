@@ -97,12 +97,6 @@ jobs:
           shasum -a 256 $FILE >>$DGST
           shasum -a 512 $FILE >>$DGST
 
-      - name: Upload artifact (full source)
-        uses: actions/upload-artifact@v3
-        with:
-          name: dae-full-src.zip
-          path: dae-full-src.zip
-
       - name: Build dae
         run: |
           mkdir -p ./build/

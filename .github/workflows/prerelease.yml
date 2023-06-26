@@ -91,11 +91,6 @@ jobs:
         run: |
           zip -9vr dae-full-src.zip . -x .git/\*
           FILE=./dae-full-src.zip
-          DGST=$FILE.dgst
-          md5sum        $FILE >>$DGST
-          shasum -a 1   $FILE >>$DGST
-          shasum -a 256 $FILE >>$DGST
-          shasum -a 512 $FILE >>$DGST
 
       - name: Build dae
         run: |
@@ -122,18 +117,13 @@ jobs:
           zip -9vr ../dae-$ASSET_NAME.zip .
           popd || exit 1
           FILE=./dae-$ASSET_NAME.zip
-          DGST=$FILE.dgst
-          md5sum        $FILE >>$DGST
-          shasum -a 1   $FILE >>$DGST
-          shasum -a 256 $FILE >>$DGST
-          shasum -a 512 $FILE >>$DGST
 
       - name: Upload full source to Artifacts
         if: matrix.goarch == 'amd64' && matrix.goamd64 == 'v1'
         uses: actions/upload-artifact@v3
         with:
           name: dae-full-src.zip
-          path: dae-full-src.zip*
+          path: dae-full-src.zip
 
       - name: Upload files to Artifacts
         uses: actions/upload-artifact@v3
@@ -152,16 +142,29 @@ jobs:
 
       - name: Prepare files for upload
         run: |
-          cp release/*
+          cp -r release/* .
+          pushd release
+          for zip_file in $(ls | grep -E "^dae-linux*");do
+              pushd $zip_file
+              zip -9r ../../"$zip_file".zip ./*
+              popd
+          done
+          popd
+          for package in $(ls | grep -E ".zip");do
+              echo "$(md5sum $package)""  md5" >> $package.dgst
+              echo "$(shasum -a 1 $package)""  sha1" >> $package.dgst
+              echo "$(shasum -a 256 $package)""  sha256" >> $package.dgst
+              echo "$(shasum -a 512 $package)""  sha512" >> $package.dgst
+          done
           echo "Show files are going to upload..."
-          ls -ltrh | grep -E ".zip*"
+          ls -lh | grep -E ".zip"
 
       - name: Upload full source to GitHub release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ inputs.tag }}
           files: |
-            dae-full-src.zip*
+            dae-full-src.zip
           prerelease: true
 
       - name: Upload full source and artifacts to GitHub release

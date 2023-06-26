@@ -7,7 +7,6 @@ on:
       tag:
         type: string
         required: true
-        description: "prerelease tag (e.g v0.1.0rc1;v0.1.0p1)"
 
 jobs:
   build:
@@ -143,7 +142,7 @@ jobs:
 
       - name: Prepare files for upload
         run: |
-          cp release/*/*.zip ./
+          cp release/* ./
           for package in $(ls | grep -E ".zip");do
               echo "$(md5sum $package)""  md5" >> $package.dgst
               echo "$(shasum -a 1 $package)""  sha1" >> $package.dgst

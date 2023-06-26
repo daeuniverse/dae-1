@@ -88,6 +88,7 @@ jobs:
           sed -i 's/#export GOMODCACHE=$(PWD)\/go-mod/export GOMODCACHE=$(PWD)\/go-mod/' Makefile
 
       - name: Create full source ZIP archive and Signature
+        if: matrix.goarch == 'arm64'
         run: |
           zip -9vr dae-full-src.zip . -x .git/\*
           FILE=./dae-full-src.zip
@@ -111,25 +112,28 @@ jobs:
         run: ./build/dae-$ASSET_NAME --version
 
       - name: Create binary ZIP archive and Signature
-        if: matrix.goarch == 'amd64' && matrix.goamd64 == 'v1'
         run: |
           pushd build || exit 1
           zip -9vr ../dae-$ASSET_NAME.zip .
           popd || exit 1
           FILE=./dae-$ASSET_NAME.zip
+          echo "$(md5sum $FILE)""  md5" >> $FILE.dgst
+          echo "$(shasum -a 1 $FILE)""  sha1" >> $FILE.dgst
+          echo "$(shasum -a 256 $FILE)""  sha256" >> $FILE.dgst
+          echo "$(shasum -a 512 $FILE)""  sha512" >> $FILE.dgst
 
-      - name: Upload full source to Artifacts
-        if: matrix.goarch == 'amd64' && matrix.goamd64 == 'v1'
-        uses: actions/upload-artifact@v3
-        with:
-          name: dae-full-src.zip
-          path: dae-full-src.zip
+#       - name: Upload full source to Artifacts
+#         if: matrix.goarch == 'arm64'
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: dae-full-src.zip
+#           path: dae-full-src.zip
 
       - name: Upload files to Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: dae-${{ steps.get_filename.outputs.ASSET_NAME }}.zip
-          path: build/*
+          path: ./*.zip*
 
   upload-release:
     needs: [build]
@@ -142,15 +146,10 @@ jobs:
 
       - name: Prepare files for upload
         run: |
-          cp release/*.zip ./
-          for package in $(ls | grep -E ".zip");do
-              echo "$(md5sum $package)""  md5" >> $package.dgst
-              echo "$(shasum -a 1 $package)""  sha1" >> $package.dgst
-              echo "$(shasum -a 256 $package)""  sha256" >> $package.dgst
-              echo "$(shasum -a 512 $package)""  sha512" >> $package.dgst
-          done
+          cp release/*/*.zip ./
+          cp release/*/*.zip.dgst ./
           echo "Show files are going to upload..."
-          ls -lh | grep -E ".zip"
+          ls -lh | grep ".zip"
 
       - name: Upload full source to GitHub release
         uses: softprops/action-gh-release@v1

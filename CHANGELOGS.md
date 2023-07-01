@@ -13,6 +13,7 @@ curl --silent "https://api.github.com/repos/daeuniverse/dae/releases" | jq -r '.
 ## Releases
 
 <!-- BEGIN NEW TOC ENTRY -->
+- [v0.2.0 (Latest)](#v020-latest)
 - [0.2.0rc4 (Pre-release)](#020rc4-pre-release)
 - [0.2.0rc2 (Pre-release)](#020rc2-pre-release)
 - [0.2.0rc1 (Pre-release)](#020rc1-pre-release)
@@ -30,6 +31,18 @@ curl --silent "https://api.github.com/repos/daeuniverse/dae/releases" | jq -r '.
 - [0.1.1](#011)
 - [0.1.0](#010)
 <!-- BEGIN NEW CHANGELOGS -->
+
+### v0.2.0 (Latest)
+
+> Release date: 2023/07/01
+
+### Bug Fixes
+* fix: should allow fallbacking ip version if dialing domain in [#164](https://github.com/daeuniverse/dae/pull/164) by (@mzz2017)
+
+### Others
+* chore(geodata): change back to v2fly geodata in [#168](https://github.com/daeuniverse/dae/pull/168) by (@mzz2017)
+
+**Full Changelog**: https://github.com/daeuniverse/dae/compare/v0.2.0rc4...v0.2.0
 
 ### 0.2.0rc4 (Pre-release)
 

@@ -36,7 +36,6 @@ curl --silent "https://api.github.com/repos/daeuniverse/dae/releases" | jq -r '.
 
 > Release date: 2023/07/01
 
-
 ### Bug Fixes
 * fix: should allow fallbacking ip version if dialing domain in [#164](https://github.com/daeuniverse/dae/pull/164) by (@mzz2017)
 

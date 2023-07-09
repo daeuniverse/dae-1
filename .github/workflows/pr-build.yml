@@ -17,7 +17,7 @@ jobs:
     uses: daeuniverse/ci-seed-jobs/.github/workflows/pre-actions.yml@master
     with:
       repository: ${{ github.repository }}
-      ref: ${{ github.sha }}
+      ref: ${{ github.event.pull_request.head.sha }}
       fetch-depth: 0
     secrets: inherit
 

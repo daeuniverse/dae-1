@@ -1,5 +1,5 @@
 name: Proposal
-description: new feature proposal
+description: new feature proposal (developer only)
 title: '[Proposal] <title>'
 labels: ['topic/proposal']
 body:

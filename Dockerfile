@@ -19,3 +19,5 @@ RUN chmod 0600 /etc/dae/config.dae
 
 CMD ["dae"]
 ENTRYPOINT ["dae", "run", "-c", "/etc/dae/config.dae"]
+
+Test
